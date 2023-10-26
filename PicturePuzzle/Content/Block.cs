@@ -10,7 +10,12 @@ public class Block
     private Vector2 _position;
     public Block(string file, Vector2 position, GraphicsDeviceManager graphics)
     {
-        FileStream fileStream = new FileStream($"/home/towk/Projects/PicturePuzzle/PicturePuzzle/Content/sprites/{file}.png", FileMode.Open);
+       // For Linux Users
+        
+         FileStream fileStream = new FileStream($"/home/towk/Projects/PicturePuzzle/PicturePuzzle/Content/sprites/{file}.png", FileMode.Open);
+        
+       // FileStream fileStream = new FileStream($"\\Users\\yourUserName\\OneDrive\\Documents\\GitHub\\PicturePuzzle\\PicturePuzzle\\Content\\sprites\\{file}.png", FileMode.Open);
+        
         _spriteAtlas = Texture2D.FromStream(graphics.GraphicsDevice, fileStream);
         // _spriteAtlas = Content.Load<Texture2D>("sprites/block_empty");
         fileStream.Dispose();
