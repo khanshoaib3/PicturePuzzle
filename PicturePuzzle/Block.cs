@@ -27,4 +27,20 @@ public class Block
     {
         spriteBatch.Draw(_spriteAtlas, _position, Color.White);
     }
+
+    public void UpdatePosition(int x, int y)
+    {
+        _position.X = x;
+        _position.Y = y;
+    }
+
+    public int GetX()
+    {
+        return (int)_position.X;
+    }
+
+    public int GetY()
+    {
+        return (int)_position.Y;
+    }
 }

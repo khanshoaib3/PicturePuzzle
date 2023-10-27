@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using PicturePuzzle.Content;
 
 namespace PicturePuzzle;
 
@@ -11,7 +9,8 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private List<Block> _blocks;
+    private BlockManager _blockManager;
+    private TimeSpan? _pressedTime;
 
     public Game1()
     {
@@ -23,19 +22,8 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _blocks = new List<Block>()
-        {
-            new Block("block_1", new Vector2(0, 0), _graphics),
-            new Block("block_2", new Vector2(120, 0), _graphics),
-            new Block("block_3", new Vector2(240, 0), _graphics),
-            new Block("block_4", new Vector2(0, 120), _graphics),
-            new Block("block_5", new Vector2(120, 120), _graphics),
-            new Block("block_6", new Vector2(240, 120), _graphics),
-            new Block("block_7", new Vector2(0, 240), _graphics),
-            new Block("block_8", new Vector2(120, 240), _graphics),
-            new Block("block_9", new Vector2(240, 240), _graphics),
-            new Block("block_empty", new Vector2(120, 360), _graphics),
-        };
+        _blockManager = new();
+        _blockManager.LoadBlocks(_graphics);
     }
 
     protected override void Update(GameTime gameTime)
@@ -43,6 +31,20 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+        TimeSpan currentTime = gameTime.TotalGameTime;
+        
+        if (Keyboard.GetState().IsKeyDown(Keys.Right)
+            && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+        {
+            _pressedTime = currentTime;
+            _blockManager.blocks[9].UpdatePosition(_blockManager.blocks[9].GetX() + 120, _blockManager.blocks[9].GetY());
+        }
+        else if (Keyboard.GetState().IsKeyDown(Keys.Left)
+                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+        {
+            _pressedTime = currentTime;
+            _blockManager.blocks[9].UpdatePosition(_blockManager.blocks[9].GetX() - 120, _blockManager.blocks[9].GetY());
+        }
 
         base.Update(gameTime);
     }
@@ -51,9 +53,9 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
-        
-        _blocks.ForEach(block => block.Draw(_spriteBatch));
-        
+
+        _blockManager.DrawAllBlocks(_spriteBatch);
+
         _spriteBatch.End();
         base.Draw(gameTime);
     }
