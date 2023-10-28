@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PicturePuzzle.Content;
 
 namespace PicturePuzzle;
 
@@ -11,6 +12,7 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private BlockManager _blockManager;
     private TimeSpan? _pressedTime;
+    int controlledBlockIndex = 9;
 
     public Game1()
     {
@@ -22,8 +24,9 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        BlockManager.LoadTextures(_graphics.GraphicsDevice);
         _blockManager = new();
-        _blockManager.LoadBlocks(_graphics);
+        _blockManager.LoadBlocks();
     }
 
     protected override void Update(GameTime gameTime)
@@ -32,18 +35,46 @@ public class Game1 : Game
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
         TimeSpan currentTime = gameTime.TotalGameTime;
-        
-        if (Keyboard.GetState().IsKeyDown(Keys.Right)
+        Block controlledBlock = _blockManager.Blocks[controlledBlockIndex];
+        if (Keyboard.GetState().IsKeyDown(Keys.Up)
             && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
         {
             _pressedTime = currentTime;
-            _blockManager.blocks[9].UpdatePosition(_blockManager.blocks[9].GetX() + 120, _blockManager.blocks[9].GetY());
+            if (controlledBlock.up != null)
+            {
+                controlledBlock.SwapTextures(controlledBlock.up);
+                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.up);
+            }
+        }
+        else if (Keyboard.GetState().IsKeyDown(Keys.Right)
+                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+        {
+            _pressedTime = currentTime;
+            if (controlledBlock.right != null)
+            {
+                controlledBlock.SwapTextures(controlledBlock.right);
+                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.right);
+            }
+        }
+        else if (Keyboard.GetState().IsKeyDown(Keys.Down)
+                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+        {
+            _pressedTime = currentTime;
+            if (controlledBlock.down != null)
+            {
+                controlledBlock.SwapTextures(controlledBlock.down);
+                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.down);
+            }
         }
         else if (Keyboard.GetState().IsKeyDown(Keys.Left)
                  && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
         {
             _pressedTime = currentTime;
-            _blockManager.blocks[9].UpdatePosition(_blockManager.blocks[9].GetX() - 120, _blockManager.blocks[9].GetY());
+            if (controlledBlock.left != null)
+            {
+                controlledBlock.SwapTextures(controlledBlock.left);
+                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.left);
+            }
         }
 
         base.Update(gameTime);
