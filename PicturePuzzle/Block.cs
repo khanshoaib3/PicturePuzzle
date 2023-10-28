@@ -40,6 +40,11 @@ public class Block
         return _currentBlockTexture;
     }
 
+    public void SetTextureName(string name)
+    {
+        _currentBlockTexture = name;
+    }
+
     public void SwapTextures(Block fromBlock)
     {
         string temp = _currentBlockTexture;

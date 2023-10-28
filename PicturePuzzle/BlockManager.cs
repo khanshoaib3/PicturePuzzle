@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -49,22 +48,25 @@ public class BlockManager
 
     public void LoadBlocks()
     {
+        int boardTopLeftX = 225;
+        int boardTopLeftY = 75;
+        
         Block[,] blockArray =
         {
             {
-                new Block("block_1", new Vector2(0, 0)),
-                new Block("block_2", new Vector2(120, 0)),
-                new Block("block_3", new Vector2(240, 0)),
+                new Block("block_1", new Vector2(boardTopLeftX + 0, boardTopLeftY + 0)),
+                new Block("block_2", new Vector2(boardTopLeftX + 120, boardTopLeftY + 0)),
+                new Block("block_3", new Vector2(boardTopLeftX + 240, boardTopLeftY + 0)),
             },
             {
-                new Block("block_4", new Vector2(0, 120)),
-                new Block("null", new Vector2(120, 120)),
-                new Block("block_5", new Vector2(240, 120)),
+                new Block("block_4", new Vector2(boardTopLeftX + 0, boardTopLeftY + 120)),
+                new Block("null", new Vector2(boardTopLeftX + 120, boardTopLeftY + 120)),
+                new Block("block_5", new Vector2(boardTopLeftX + 240, boardTopLeftY + 120)),
             },
             {
-                new Block("block_6", new Vector2(0, 240)),
-                new Block("block_7", new Vector2(120, 240)),
-                new Block("block_8", new Vector2(240, 240)),
+                new Block("block_6", new Vector2(boardTopLeftX + 0, boardTopLeftY + 240)),
+                new Block("block_7", new Vector2(boardTopLeftX + 120, boardTopLeftY + 240)),
+                new Block("block_8", new Vector2(boardTopLeftX + 240, boardTopLeftY + 240)),
             }
         };
 
@@ -85,6 +87,48 @@ public class BlockManager
                 Blocks.Add(blockArray[i, j]);
             }
         }
+
+        List<string> randomisedTextures = RandomiseTextures();
+        for (int i = 0; i < 9; i++)
+        {
+            Blocks[i].SetTextureName(randomisedTextures[i]);
+            if (randomisedTextures[i] == "null")
+                _controlledBlockIndex = i;
+        }
+    }
+
+    private List<string> RandomiseTextures()
+    {
+        List<string> source = new()
+        {
+            "null",
+            "block_1",
+            "block_2",
+            "block_3",
+            "block_4",
+            "block_5",
+            "block_6",
+            "block_7",
+            "block_8",
+        };
+        List<string> randomTextures = new();
+        Random random = new Random();
+        List<int> acquiredIndexes = new();
+
+        for(int i = 0; i < 9; i++)
+        {
+            int r = (int)random.NextInt64(0, 9);
+            while (acquiredIndexes.Contains(r))
+            {
+                r = (int)random.NextInt64(0, 9);
+            }
+            
+            randomTextures.Add(source[r]);
+            acquiredIndexes.Add(r);
+                Console.WriteLine(r.ToString());
+        }
+
+        return randomTextures;
     }
 
     public void DrawAllBlocks(SpriteBatch spriteBatch)
@@ -157,14 +201,14 @@ public class BlockManager
     {
         List<string> correctFormat = new List<string>()
         {
-            "block_8",
-            "block_7",
-            "block_6",
-            "block_5",
-            "block_4",
-            "block_3",
-            "block_2",
             "block_1",
+            "block_2",
+            "block_3",
+            "block_4",
+            "block_5",
+            "block_6",
+            "block_7",
+            "block_8",
             "null",
         };
 
