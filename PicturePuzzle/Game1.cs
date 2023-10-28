@@ -12,7 +12,6 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private BlockManager _blockManager;
     private TimeSpan? _pressedTime;
-    int controlledBlockIndex = 9;
 
     public Game1()
     {
@@ -34,46 +33,45 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-        TimeSpan currentTime = gameTime.TotalGameTime;
-        Block controlledBlock = _blockManager.Blocks[controlledBlockIndex];
-        if (Keyboard.GetState().IsKeyDown(Keys.Up)
-            && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+
+        if (_blockManager.IsArranged())
         {
-            _pressedTime = currentTime;
-            if (controlledBlock.up != null)
-            {
-                controlledBlock.SwapTextures(controlledBlock.up);
-                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.up);
-            }
+            base.Update(gameTime);
+            return;
         }
-        else if (Keyboard.GetState().IsKeyDown(Keys.Right)
-                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
+
+        var currentTime = gameTime.TotalGameTime;
+        if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))
         {
-            _pressedTime = currentTime;
-            if (controlledBlock.right != null)
+            foreach (var key in Keyboard.GetState().GetPressedKeys())
             {
-                controlledBlock.SwapTextures(controlledBlock.right);
-                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.right);
+                if (_blockManager.KeyPressed(key))
+                {
+                    _pressedTime = currentTime;
+                    base.Update(gameTime);
+                    return;
+                }
             }
-        }
-        else if (Keyboard.GetState().IsKeyDown(Keys.Down)
-                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
-        {
-            _pressedTime = currentTime;
-            if (controlledBlock.down != null)
+
+            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadUp))
             {
-                controlledBlock.SwapTextures(controlledBlock.down);
-                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.down);
+                _blockManager.HandleUpMovement();
+                _pressedTime = currentTime;
             }
-        }
-        else if (Keyboard.GetState().IsKeyDown(Keys.Left)
-                 && (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250)))
-        {
-            _pressedTime = currentTime;
-            if (controlledBlock.left != null)
+            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
             {
-                controlledBlock.SwapTextures(controlledBlock.left);
-                controlledBlockIndex = _blockManager.Blocks.IndexOf(controlledBlock.left);
+                _blockManager.HandleRightMovement();
+                _pressedTime = currentTime;
+            }
+            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
+            {
+                _blockManager.HandleDownMovement();
+                _pressedTime = currentTime;
+            }
+            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
+            {
+                _blockManager.HandleLeftMovement();
+                _pressedTime = currentTime;
             }
         }
 
