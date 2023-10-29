@@ -2,12 +2,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using PicturePuzzle.Content;
 
 namespace PicturePuzzle;
 
 public class Game1 : Game
 {
+    // ReSharper disable once NotAccessedField.Local
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private BlockManager _blockManager;
@@ -23,7 +23,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        BlockManager.LoadTextures(_graphics.GraphicsDevice);
+        BlockManager.LoadTextures(Content);
         _blockManager = new();
         _blockManager.LoadBlocks();
     }

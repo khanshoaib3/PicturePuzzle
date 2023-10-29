@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PicturePuzzle.Content;
@@ -15,15 +15,8 @@ public class BlockManager
 
     private int _controlledBlockIndex = 4;
 
-    public static void LoadTextures(GraphicsDevice graphicsDevice)
+    public static void LoadTextures(ContentManager content)
     {
-        string filePath;
-        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-            filePath = "/home/towk/Projects/PicturePuzzle/PicturePuzzle/Content/sprites/";
-        else
-            filePath =
-                "\\Users\\yourUserName\\OneDrive\\Documents\\GitHub\\PicturePuzzle\\PicturePuzzle\\Content\\sprites\\";
-
         List<string> textureNames = new List<string>()
         {
             "block_background",
@@ -40,9 +33,7 @@ public class BlockManager
 
         foreach (var name in textureNames)
         {
-            FileStream fileStream = new FileStream(filePath + name + ".png", FileMode.Open);
-            BlockTextures.Add(name, Texture2D.FromStream(graphicsDevice, fileStream));
-            fileStream.Dispose();
+            BlockTextures.Add(name, content.Load<Texture2D>($"sprites/{name}"));
         }
     }
 
