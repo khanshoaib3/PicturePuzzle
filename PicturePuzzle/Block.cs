@@ -25,12 +25,12 @@ public class Block
     public void Draw(SpriteBatch spriteBatch)
     {
         Texture2D backgroundTexture;
-        BlockManager.BlockTextures.TryGetValue("block_background", out backgroundTexture);
+        SimpleBoard.BlockTextures.TryGetValue("block_background", out backgroundTexture);
         spriteBatch.Draw(backgroundTexture, _position, Color.White);
         if (_currentBlockTexture != "null")
         {
             Texture2D currentBlockTexture;
-            BlockManager.BlockTextures.TryGetValue(_currentBlockTexture, out currentBlockTexture);
+            SimpleBoard.BlockTextures.TryGetValue(_currentBlockTexture, out currentBlockTexture);
             spriteBatch.Draw(currentBlockTexture, new Vector2(_position.X + 5, _position.Y + 5), Color.White);
         }
     }

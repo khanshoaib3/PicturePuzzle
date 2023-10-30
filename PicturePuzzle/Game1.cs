@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace PicturePuzzle;
 
@@ -10,8 +8,7 @@ public class Game1 : Game
     // ReSharper disable once NotAccessedField.Local
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private BlockManager _blockManager;
-    private TimeSpan? _pressedTime;
+    public BaseScene CurrentScene;
 
     public Game1()
     {
@@ -23,57 +20,12 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        BlockManager.LoadTextures(Content);
-        _blockManager = new();
-        _blockManager.LoadBlocks();
+        CurrentScene = new TitleScene(this);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        if (_blockManager.IsArranged())
-        {
-            base.Update(gameTime);
-            return;
-        }
-
-        var currentTime = gameTime.TotalGameTime;
-        if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))
-        {
-            foreach (var key in Keyboard.GetState().GetPressedKeys())
-            {
-                if (_blockManager.KeyPressed(key))
-                {
-                    _pressedTime = currentTime;
-                    base.Update(gameTime);
-                    return;
-                }
-            }
-
-            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadUp))
-            {
-                _blockManager.HandleUpMovement();
-                _pressedTime = currentTime;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
-            {
-                _blockManager.HandleLeftMovement();
-                _pressedTime = currentTime;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
-            {
-                _blockManager.HandleUpMovement();
-                _pressedTime = currentTime;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
-            {
-                _blockManager.HandleRightMovement();
-                _pressedTime = currentTime;
-            }
-        }
+        CurrentScene?.Update(gameTime, _graphics);
 
         base.Update(gameTime);
     }
@@ -83,7 +35,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
 
-        _blockManager.DrawAllBlocks(_spriteBatch);
+        CurrentScene?.Draw(_spriteBatch);
 
         _spriteBatch.End();
         base.Draw(gameTime);

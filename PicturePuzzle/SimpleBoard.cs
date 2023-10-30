@@ -8,7 +8,7 @@ using PicturePuzzle.Content;
 
 namespace PicturePuzzle;
 
-public class BlockManager
+public class SimpleBoard
 {
     public List<Block> Blocks = new();
     public static Dictionary<string, Texture2D> BlockTextures = new();
