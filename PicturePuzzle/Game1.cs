@@ -60,17 +60,17 @@ public class Game1 : Game
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
             {
-                _blockManager.HandleRightMovement();
+                _blockManager.HandleLeftMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
             {
-                _blockManager.HandleDownMovement();
+                _blockManager.HandleUpMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
             {
-                _blockManager.HandleLeftMovement();
+                _blockManager.HandleRightMovement();
                 _pressedTime = currentTime;
             }
         }

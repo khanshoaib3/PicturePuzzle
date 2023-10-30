@@ -116,7 +116,6 @@ public class BlockManager
             
             randomTextures.Add(source[r]);
             acquiredIndexes.Add(r);
-                Console.WriteLine(r.ToString());
         }
 
         return randomTextures;
@@ -132,16 +131,16 @@ public class BlockManager
         switch (keyboardKey)
         {
             case Keys.Up:
-                HandleUpMovement();
-                return true;
-            case Keys.Right:
-                HandleRightMovement();
-                return true;
-            case Keys.Down:
                 HandleDownMovement();
                 return true;
-            case Keys.Left:
+            case Keys.Right:
                 HandleLeftMovement();
+                return true;
+            case Keys.Down:
+                HandleUpMovement();
+                return true;
+            case Keys.Left:
+                HandleRightMovement();
                 return true;
             default:
                 return false;
