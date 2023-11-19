@@ -118,7 +118,25 @@ public class SimpleBoard
             acquiredIndexes.Add(r);
         }
 
-        return randomTextures;
+        if (IsSolvable(acquiredIndexes))
+            return randomTextures;
+        else
+            return RandomiseTextures();
+    }
+
+    private bool IsSolvable(List<int> indexes)
+    {
+        int inversions = 0;
+        for (int i = 0; i < 9 - 1; i++)
+        {
+            for (int j = i + 1; j < 9; j++)
+            {
+                if (indexes[j] > 0 && indexes[i] > 0 && indexes[i] > indexes[j])
+                    inversions++;
+            }
+        }
+
+        return (inversions % 2 == 0);
     }
 
     public void DrawAllBlocks(SpriteBatch spriteBatch)
