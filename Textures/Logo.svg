@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="96"
+   height="32"
+   viewBox="0 0 25.399999 8.4666667"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="Logo.svg"
+   inkscape:export-filename="Logo.png"
+   inkscape:export-xdpi="480"
+   inkscape:export-ydpi="480"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="3.5338542"
+     inkscape:cx="40.182756"
+     inkscape:cy="34.381724"
+     inkscape:window-width="1920"
+     inkscape:window-height="995"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter3"
+       x="-0.010425683"
+       y="-0.061809446"
+       width="1.0208514"
+       height="1.1236189">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.05808862"
+         id="feGaussianBlur3" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4"
+       x="-0.009994252"
+       y="-0.065676568"
+       width="1.0199885"
+       height="1.1313531">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.066164159"
+         id="feGaussianBlur4" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:4.24449px;font-family:'04b';-inkscape-font-specification:'04b';fill:#81171b;fill-opacity:0.35;stroke:#540804;stroke-width:0.141552;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.35;paint-order:normal;filter:url(#filter4)"
+       x="0.22957002"
+       y="3.7250326"
+       id="text1-4"
+       inkscape:label="text1-4"><tspan
+         sodipodi:role="line"
+         id="tspan1-5"
+         style="fill:#81171b;fill-opacity:0.35;stroke:#540804;stroke-width:0.141552;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.35;paint-order:normal"
+         x="0.22957002"
+         y="3.7250326">Picture</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.24449px;font-family:'04b';-inkscape-font-specification:'04b';fill:#81171b;fill-opacity:1;stroke:#540804;stroke-width:0.141482;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       x="0.470741"
+       y="3.9662035"
+       id="text1-4-4"
+       inkscape:label="text1-4"><tspan
+         sodipodi:role="line"
+         id="tspan1-5-3"
+         style="fill:#81171b;fill-opacity:1;stroke:#540804;stroke-width:0.141482;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         x="0.470741"
+         y="3.9662035">Picture</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.07219px;font-family:'04b';-inkscape-font-specification:'04b';fill:#81171b;fill-opacity:1;stroke:#540804;stroke-width:0.135739;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       x="5.4502506"
+       y="8.398797"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="stroke-width:0.135739"
+         x="5.4502506"
+         y="8.398797">Puzzle</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.07219px;font-family:'04b';-inkscape-font-specification:'04b';fill:#81171b;fill-opacity:0.34999999;stroke:#540804;stroke-width:0.135739;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.34999999;paint-order:normal;filter:url(#filter3)"
+       x="5.2498693"
+       y="8.1984377"
+       id="text2-7"><tspan
+         sodipodi:role="line"
+         id="tspan2-8"
+         style="stroke-width:0.135739;stroke:#540804;stroke-opacity:0.34999999;fill:#81171b;fill-opacity:0.34999999"
+         x="5.2498693"
+         y="8.1984377">Puzzle</tspan></text>
+  </g>
+</svg>
