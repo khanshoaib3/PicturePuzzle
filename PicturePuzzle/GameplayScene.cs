@@ -8,11 +8,13 @@ namespace PicturePuzzle;
 
 public class GameplayScene : BaseScene
 {
+    private Game1 _game1;
     private SimpleBoard _simpleBoard;
     private TimeSpan? _pressedTime;
 
     public GameplayScene(Game1 game1)
     {
+        _game1 = game1;
         LoadTextures(game1.Content);
     }
 
@@ -27,6 +29,7 @@ public class GameplayScene : BaseScene
     {
         if (_simpleBoard.IsArranged())
         {
+            _game1.CurrentScene = new TitleScene(_game1);
             return;
         }
 

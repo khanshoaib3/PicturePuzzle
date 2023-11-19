@@ -32,7 +32,7 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(new Color(234, 140, 85));
         _spriteBatch.Begin();
 
         CurrentScene?.Draw(_spriteBatch);
