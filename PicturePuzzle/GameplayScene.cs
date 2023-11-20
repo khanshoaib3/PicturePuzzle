@@ -21,7 +21,7 @@ public class GameplayScene : BaseScene
     private void LoadTextures(ContentManager content)
     {
         SimpleBoard.LoadTextures(content);
-        _simpleBoard = new();
+        _simpleBoard = new SimpleBoard(_game1);
         _simpleBoard.LoadBlocks();
     }
     
@@ -77,6 +77,6 @@ public class GameplayScene : BaseScene
     
     public override void Draw(SpriteBatch spriteBatch)
     {
-        _simpleBoard.DrawAllBlocks(spriteBatch);
+        _simpleBoard.Draw(spriteBatch);
     }
 }

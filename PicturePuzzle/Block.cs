@@ -25,8 +25,6 @@ public class Block
     public void Draw(SpriteBatch spriteBatch)
     {
         Texture2D backgroundTexture;
-        SimpleBoard.BlockTextures.TryGetValue("block_background", out backgroundTexture);
-        spriteBatch.Draw(backgroundTexture, _position, Color.White);
         if (_currentBlockTexture != "null")
         {
             Texture2D currentBlockTexture;

@@ -13,13 +13,23 @@ public class SimpleBoard
     public List<Block> Blocks = new();
     public static Dictionary<string, Texture2D> BlockTextures = new();
 
+    private static Texture2D _boardBackgroundTexture;
+
     private int _controlledBlockIndex = 4;
+    private Game1 _game1;
+    private const int boardTopLeftX = 225;
+    private const int boardTopLeftY = 75;
+
+
+    public SimpleBoard(Game1 game1)
+    {
+        _game1 = game1;
+    }
 
     public static void LoadTextures(ContentManager content)
     {
         List<string> textureNames = new List<string>()
         {
-            "block_background",
             "block_1",
             "block_2",
             "block_3",
@@ -35,13 +45,12 @@ public class SimpleBoard
         {
             BlockTextures.Add(name, content.Load<Texture2D>($"sprites/{name}"));
         }
+
+        _boardBackgroundTexture = content.Load<Texture2D>("sprites/BoardBackground");
     }
 
     public void LoadBlocks()
     {
-        int boardTopLeftX = 225;
-        int boardTopLeftY = 75;
-        
         Block[,] blockArray =
         {
             {
@@ -139,8 +148,9 @@ public class SimpleBoard
         return (inversions % 2 == 0);
     }
 
-    public void DrawAllBlocks(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch)
     {
+        spriteBatch.Draw(_boardBackgroundTexture, new Vector2(boardTopLeftX - 10, boardTopLeftY - 10), Color.White);
         Blocks.ForEach(block => block.Draw(spriteBatch));
     }
 
