@@ -15,21 +15,17 @@ public class GameplayScene : BaseScene
     public GameplayScene(Game1 game1)
     {
         _game1 = game1;
+        _simpleBoard = new SimpleBoard(_game1);
         LoadTextures(game1.Content);
     }
 
     private void LoadTextures(ContentManager content)
     {
-        _simpleBoard = new SimpleBoard(_game1);
     }
     
     public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
-        if (_simpleBoard.IsArranged())
-        {
-            _game1.CurrentScene = new TitleScene(_game1);
-            return;
-        }
+        _simpleBoard.Update(gameTime);
 
         var currentTime = gameTime.TotalGameTime;
         if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))

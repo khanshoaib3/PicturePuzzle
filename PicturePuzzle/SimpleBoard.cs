@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,11 +15,16 @@ public class SimpleBoard
     private readonly Dictionary<Texture2D, string> _blockTexturesReversed = new();
     private readonly List<string> _textureNamesInOrder;
 
-
     private int _controlledBlockIndex = 4;
+    private const int BoardTopLeftX = 10;
+    private const int BoardTopLeftY = 10;
+    private readonly SpriteFont _04BFont;
     private readonly Game1 _game1;
-    private const int BoardTopLeftX = 225;
-    private const int BoardTopLeftY = 75;
+
+    private int _totalMoves;
+    private int _timeLeft;
+    private TimeSpan? _startingTime;
+    private int _totalTimeInSeconds;
 
 
     public SimpleBoard(Game1 game1)
@@ -28,51 +32,59 @@ public class SimpleBoard
         _game1 = game1;
         _textureNamesInOrder = new List<string>()
         {
-            "sprites/block_1",
-            "sprites/block_2",
-            "sprites/block_3",
-            "sprites/block_4",
-            "sprites/block_5",
-            "sprites/block_6",
-            "sprites/block_7",
-            "sprites/block_8",
+            "sprites/simple_board/block_1",
+            "sprites/simple_board/block_2",
+            "sprites/simple_board/block_3",
+            "sprites/simple_board/block_4",
+            "sprites/simple_board/block_5",
+            "sprites/simple_board/block_6",
+            "sprites/simple_board/block_7",
+            "sprites/simple_board/block_8",
             "null",
         };
-        LoadTextures(_game1.Content);
+        _04BFont = _game1.Content.Load<SpriteFont>("fonts/04B_30");
+        _timeLeft = 120;
+        _totalTimeInSeconds = 120;
+        LoadTextures();
         LoadBlocks();
     }
 
-    private void LoadTextures(ContentManager content)
+    private void LoadTextures()
     {
         foreach (var name in _textureNamesInOrder)
         {
             if (name == "null") continue;
-            var texture2D = content.Load<Texture2D>(name);
+            var texture2D = _game1.Content.Load<Texture2D>(name);
             _blockTextures.Add(name, texture2D);
             _blockTexturesReversed.Add(texture2D, name);
         }
 
-        _boardBackgroundTexture = content.Load<Texture2D>("sprites/BoardBackground");
+        _boardBackgroundTexture = _game1.Content.Load<Texture2D>("sprites/common/BoardBackground");
     }
 
     private void LoadBlocks()
     {
+        int blockStartX = BoardTopLeftX + 5;
+        int blockStartY = BoardTopLeftY + 85;
+        int blockWidth = _blockTextures["sprites/simple_board/block_1"].Width;
+        int blockHeight = _blockTextures["sprites/simple_board/block_1"].Height;
+        // ReSharper disable UselessBinaryOperation
         Block[,] blockArray =
         {
             {
-                new Block(BoardTopLeftX + 0, BoardTopLeftY + 0),
-                new Block(BoardTopLeftX + 120, BoardTopLeftY + 0),
-                new Block(BoardTopLeftX + 240, BoardTopLeftY + 0),
+                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 0),
+                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 0),
+                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 0),
             },
             {
-                new Block(BoardTopLeftX + 0, BoardTopLeftY + 120),
-                new Block(BoardTopLeftX + 120, BoardTopLeftY + 120),
-                new Block(BoardTopLeftX + 240, BoardTopLeftY + 120),
+                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 1),
+                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 1),
+                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 1),
             },
             {
-                new Block(BoardTopLeftX + 0, BoardTopLeftY + 240),
-                new Block(BoardTopLeftX + 120, BoardTopLeftY + 240),
-                new Block(BoardTopLeftX + 240, BoardTopLeftY + 240),
+                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 2),
+                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 2),
+                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 2),
             }
         };
 
@@ -112,7 +124,7 @@ public class SimpleBoard
         List<string> randomTextures = new();
         Random random = new Random();
         List<int> acquiredIndexes = new();
-        
+
         // Move "null" to first
         List<string> source = new();
         source.Add("null");
@@ -154,12 +166,6 @@ public class SimpleBoard
         return (inversions % 2 == 0);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
-    {
-        spriteBatch.Draw(_boardBackgroundTexture, new Vector2(BoardTopLeftX - 10, BoardTopLeftY - 10), Color.White);
-        _blocks.ForEach(block => block.Draw(spriteBatch));
-    }
-
     public bool KeyPressed(Keys keyboardKey)
     {
         switch (keyboardKey)
@@ -188,6 +194,7 @@ public class SimpleBoard
         {
             controlledBlock.SwapTextures(controlledBlock.Up);
             _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Up);
+            _totalMoves++;
         }
     }
 
@@ -198,6 +205,7 @@ public class SimpleBoard
         {
             controlledBlock.SwapTextures(controlledBlock.Right);
             _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Right);
+            _totalMoves++;
         }
     }
 
@@ -208,6 +216,7 @@ public class SimpleBoard
         {
             controlledBlock.SwapTextures(controlledBlock.Down);
             _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Down);
+            _totalMoves++;
         }
     }
 
@@ -218,6 +227,7 @@ public class SimpleBoard
         {
             controlledBlock.SwapTextures(controlledBlock.Left);
             _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Left);
+            _totalMoves++;
         }
     }
 
@@ -242,5 +252,43 @@ public class SimpleBoard
         }
 
         return true;
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        _startingTime ??= gameTime.TotalGameTime;
+        _timeLeft = _totalTimeInSeconds - (int)(gameTime.TotalGameTime - (TimeSpan)_startingTime).TotalSeconds;
+        
+        if (IsArranged())
+        {
+            _game1.CurrentScene = new TitleScene(_game1);
+            return;
+        }
+
+        if (_timeLeft <= 0)
+        {
+            _game1.CurrentScene = new TitleScene(_game1);
+            return;
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        spriteBatch.Draw(_boardBackgroundTexture, new Vector2(BoardTopLeftX, BoardTopLeftY), Color.White);
+        _blocks.ForEach(block => block.Draw(spriteBatch));
+
+        spriteBatch.DrawString(_04BFont, $"Moves: {_totalMoves}", new Vector2(BoardTopLeftX + 15, BoardTopLeftY + 57),
+            new Color(129, 23, 27), 0, Vector2.Zero, 0.8f, SpriteEffects.None, 0.5f);
+
+        Vector2 textMiddlePoint = _04BFont.MeasureString("Simple Board") / 2;
+        // ReSharper disable once PossibleLossOfFraction
+        spriteBatch.DrawString(_04BFont, "Simple Board",
+            new Vector2(BoardTopLeftX + _boardBackgroundTexture.Width / 2,
+                BoardTopLeftY + 40), new Color(84, 8, 4), 0, textMiddlePoint, 1.6f, SpriteEffects.None, 0.5f);
+
+        var x = BoardTopLeftX + _boardBackgroundTexture.Width - _04BFont.MeasureString($"Time: {_timeLeft}").X + 12;
+        spriteBatch.DrawString(_04BFont, $"Time: {_timeLeft}",
+            new Vector2(x, BoardTopLeftY + 57), new Color(129, 23, 27), 0, Vector2.Zero, 0.8f, SpriteEffects.None,
+            0.5f);
     }
 }

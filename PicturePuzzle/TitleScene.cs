@@ -26,7 +26,7 @@ public class TitleScene : BaseScene
 
     private void LoadTextures(ContentManager content)
     {
-        _logoTexture = content.Load<Texture2D>("sprites/title_screen/Logo");
+        _logoTexture = content.Load<Texture2D>("sprites/title_screen/logo");
         _startButton.LoadTextures(content);
         _exitButton.LoadTextures(content);
     }
