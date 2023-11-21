@@ -19,64 +19,39 @@ public class GameplayScene : IScene
 
     public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
+        _currentBoard.Update(gameTime);
+
         if (_currentBoard.HasEnded)
         {
-            _game1.CurrentScene =
-                new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
+            _game1.CurrentScene = new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
             return;
         }
 
-        _currentBoard.Update(gameTime);
+        HandleInputs(gameTime);
+    }
 
+    private void HandleInputs(GameTime gameTime)
+    {
         var currentTime = gameTime.TotalGameTime;
-        if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))
+        if (_pressedTime != null && currentTime - (TimeSpan)_pressedTime < TimeSpan.FromMilliseconds(250)) return;
+
+        foreach (var key in Keyboard.GetState().GetPressedKeys())
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.F11))
-            {
-                _pressedTime = currentTime;
-                graphics.ToggleFullScreen();
-                return;
-            }
+            if (!_currentBoard.HandleKeyPressed(key)) continue;
+            _pressedTime = currentTime;
+            return;
+        }
 
-            foreach (var key in Keyboard.GetState().GetPressedKeys())
-            {
-                if (_currentBoard.KeyPressed(key))
-                {
-                    _pressedTime = currentTime;
-                    return;
-                }
-            }
+        if (_currentBoard.HandleGamepadButton(GamePad.GetState(PlayerIndex.One)))
+        {
+            _pressedTime = currentTime;
+            return;
+        }
 
-            if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadUp))
-            {
-                _currentBoard.HandleDownMovement();
-                _pressedTime = currentTime;
-                return;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
-            {
-                _currentBoard.HandleLeftMovement();
-                _pressedTime = currentTime;
-                return;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
-            {
-                _currentBoard.HandleUpMovement();
-                _pressedTime = currentTime;
-                return;
-            }
-            else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
-            {
-                _currentBoard.HandleRightMovement();
-                _pressedTime = currentTime;
-                return;
-            }
-
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
-                if (_currentBoard.HandleMouseLeftButton(Mouse.GetState().X, Mouse.GetState().Y))
-                    _pressedTime = currentTime;
-            }
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed &&
+            _currentBoard.HandleMouseLeftButton(Mouse.GetState().X, Mouse.GetState().Y))
+        {
+            _pressedTime = currentTime;
         }
     }
 

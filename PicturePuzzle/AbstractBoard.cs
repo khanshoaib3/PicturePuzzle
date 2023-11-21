@@ -23,7 +23,7 @@ public abstract class AbstractBoard
     private int _controlledBlockIndex;
     private TimeSpan? _startingTime;
     private int _totalTimeInSeconds;
-    
+
     public string BoardName { get; }
     public bool HasEnded { get; private set; }
     public bool HasWon { get; private set; }
@@ -141,8 +141,7 @@ public abstract class AbstractBoard
 
         if (IsSolvable(acquiredIndexes))
             return randomTextures;
-        else
-            return RandomiseTextures();
+        return RandomiseTextures();
     }
 
     private bool IsSolvable(List<int> indexes)
@@ -160,7 +159,7 @@ public abstract class AbstractBoard
         return (inversions % 2 == 0);
     }
 
-    public bool KeyPressed(Keys keyboardKey)
+    public bool HandleKeyPressed(Keys keyboardKey)
     {
         switch (keyboardKey)
         {
@@ -179,6 +178,70 @@ public abstract class AbstractBoard
             default:
                 return false;
         }
+    }
+
+    public bool HandleMouseLeftButton(int mouseX, int mouseY)
+    {
+        foreach (Block block in _blocks)
+        {
+            if (!block.Contains(mouseX, mouseY)) continue;
+
+            if (block.Up != null && block.Up.Texture == null)
+            {
+                block.SwapTextures(block.Up);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Right != null && block.Right.Texture == null)
+            {
+                block.SwapTextures(block.Right);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Down != null && block.Down.Texture == null)
+            {
+                block.SwapTextures(block.Down);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Left != null && block.Left.Texture == null)
+            {
+                block.SwapTextures(block.Left);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool HandleGamepadButton(GamePadState gamePadState)
+    {
+        if (gamePadState.IsButtonDown(Buttons.DPadUp))
+        {
+            HandleDownMovement();
+            return true;
+        }
+
+        if (gamePadState.IsButtonDown(Buttons.DPadRight))
+        {
+            HandleLeftMovement();
+            return true;
+        }
+        if (gamePadState.IsButtonDown(Buttons.DPadDown))
+        {
+            HandleUpMovement();
+            return true;
+        }
+        if (gamePadState.IsButtonDown(Buttons.DPadLeft))
+        {
+            HandleRightMovement();
+            return true;
+        }
+
+        return false;
     }
 
     public void HandleUpMovement()
@@ -225,43 +288,6 @@ public abstract class AbstractBoard
         }
     }
 
-    public bool HandleMouseLeftButton(int mouseX, int mouseY)
-    {
-        foreach (Block block in _blocks)
-        {
-            if (!block.Contains(mouseX, mouseY)) continue;
-
-            if (block.Up != null && block.Up.Texture == null)
-            {
-                block.SwapTextures(block.Up);
-                _controlledBlockIndex = _blocks.IndexOf(block);
-                Moves++;
-            }
-            else if (block.Right != null && block.Right.Texture == null)
-            {
-                block.SwapTextures(block.Right);
-                _controlledBlockIndex = _blocks.IndexOf(block);
-                Moves++;
-            }
-            else if (block.Down != null && block.Down.Texture == null)
-            {
-                block.SwapTextures(block.Down);
-                _controlledBlockIndex = _blocks.IndexOf(block);
-                Moves++;
-            }
-            else if (block.Left != null && block.Left.Texture == null)
-            {
-                block.SwapTextures(block.Left);
-                _controlledBlockIndex = _blocks.IndexOf(block);
-                Moves++;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     public bool IsArranged()
     {
         for (var i = 0; i < 9; i++)
@@ -288,10 +314,10 @@ public abstract class AbstractBoard
     public void Update(GameTime gameTime)
     {
         if (HasEnded) return;
-        
+
         _startingTime ??= gameTime.TotalGameTime;
         TimeLeft = _totalTimeInSeconds - (int)(gameTime.TotalGameTime - (TimeSpan)_startingTime).TotalSeconds;
-        
+
         if (IsArranged())
         {
             HasWon = true;
