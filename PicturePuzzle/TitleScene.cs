@@ -17,18 +17,21 @@ public class TitleScene : BaseScene
     public TitleScene(Game1 game1)
     {
         _game1 = game1;
-        _startButton = new Button(100, 340, "sprites/title_screen/start_button_unhovered",
-            "sprites/title_screen/start_button_hovered", () => game1.CurrentScene = new GameplayScene(game1), game1);
-        _exitButton = new Button(520, 340, "sprites/title_screen/exit_button_unhovered",
-            "sprites/title_screen/exit_button_hovered", () => game1.Exit(), game1);
+        int centerX = _game1.Window.ClientBounds.Width / 2;
+        _startButton = new Button("sprites/common/start_button_unhovered", "sprites/common/start_button_hovered",
+            () => game1.CurrentScene = new GameplayScene(game1), game1);
+        _startButton.X = centerX - _startButton.Width - 80;
+        _startButton.Y = _game1.Window.ClientBounds.Height - _startButton.Height - 140;
+        _exitButton = new Button("sprites/common/exit_button_unhovered", "sprites/common/exit_button_hovered",
+            () => game1.Exit(), game1);
+        _exitButton.X = centerX + 80;
+        _exitButton.Y = _game1.Window.ClientBounds.Height - _exitButton.Height - 140;
         LoadTextures(game1.Content);
     }
 
     private void LoadTextures(ContentManager content)
     {
         _logoTexture = content.Load<Texture2D>("sprites/title_screen/logo");
-        _startButton.LoadTextures(content);
-        _exitButton.LoadTextures(content);
     }
 
     public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
@@ -41,14 +44,16 @@ public class TitleScene : BaseScene
         {
             _game1.CurrentScene = new GameplayScene(_game1);
         }
-        
+
         _startButton.Update();
         _exitButton.Update();
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_logoTexture, new Vector2(150, 80), Color.White);
+        int xPos = _game1.Window.ClientBounds.Width / 2 - _logoTexture.Width / 2;
+        int yPos = _game1.Window.ClientBounds.Height / 2 - _logoTexture.Height / 2 - 80;
+        spriteBatch.Draw(_logoTexture, new Vector2(xPos, yPos), Color.White);
         _startButton.Draw(spriteBatch);
         _exitButton.Draw(spriteBatch);
     }

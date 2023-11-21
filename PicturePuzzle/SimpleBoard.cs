@@ -25,6 +25,14 @@ public class SimpleBoard
     private int _timeLeft;
     private TimeSpan? _startingTime;
     private int _totalTimeInSeconds;
+    
+    private bool _hasEnded;
+    private bool _hasWon;
+
+    public bool HasEnded => _hasEnded;
+    public bool HasWon => _hasWon;
+    public int Moves => _totalMoves;
+    public int TimeLeft => _timeLeft;
 
 
     public SimpleBoard(Game1 game1)
@@ -43,8 +51,9 @@ public class SimpleBoard
             "null",
         };
         _04BFont = _game1.Content.Load<SpriteFont>("fonts/04B_30");
-        _timeLeft = 120;
-        _totalTimeInSeconds = 120;
+        _timeLeft = 240;
+        _totalTimeInSeconds = 240;
+        _hasEnded = false;
         LoadTextures();
         LoadBlocks();
     }
@@ -59,7 +68,7 @@ public class SimpleBoard
             _blockTexturesReversed.Add(texture2D, name);
         }
 
-        _boardBackgroundTexture = _game1.Content.Load<Texture2D>("sprites/common/BoardBackground");
+        _boardBackgroundTexture = _game1.Content.Load<Texture2D>("sprites/common/board_background");
     }
 
     private void LoadBlocks()
@@ -256,19 +265,22 @@ public class SimpleBoard
 
     public void Update(GameTime gameTime)
     {
+        if (_hasEnded) return;
+        
         _startingTime ??= gameTime.TotalGameTime;
         _timeLeft = _totalTimeInSeconds - (int)(gameTime.TotalGameTime - (TimeSpan)_startingTime).TotalSeconds;
         
         if (IsArranged())
         {
-            _game1.CurrentScene = new TitleScene(_game1);
+            _hasWon = true;
+            _hasEnded = true;
             return;
         }
 
         if (_timeLeft <= 0)
         {
-            _game1.CurrentScene = new TitleScene(_game1);
-            return;
+            _hasWon = false;
+            _hasEnded = true;
         }
     }
 

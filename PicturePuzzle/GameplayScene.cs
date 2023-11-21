@@ -16,21 +16,26 @@ public class GameplayScene : BaseScene
     {
         _game1 = game1;
         _simpleBoard = new SimpleBoard(_game1);
-        LoadTextures(game1.Content);
     }
 
     private void LoadTextures(ContentManager content)
     {
     }
-    
+
     public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
+        if (_simpleBoard.HasEnded)
+        {
+            _game1.CurrentScene = new EndScene(_game1, _simpleBoard.HasWon, _simpleBoard.Moves, _simpleBoard.TimeLeft);
+            return;
+        }
+
         _simpleBoard.Update(gameTime);
 
         var currentTime = gameTime.TotalGameTime;
         if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))
         {
-            if ( Keyboard.GetState().IsKeyDown(Keys.F11))
+            if (Keyboard.GetState().IsKeyDown(Keys.F11))
             {
                 _pressedTime = currentTime;
                 graphics.ToggleFullScreen();
@@ -68,7 +73,7 @@ public class GameplayScene : BaseScene
             }
         }
     }
-    
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         _simpleBoard.Draw(spriteBatch);

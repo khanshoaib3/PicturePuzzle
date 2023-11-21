@@ -13,6 +13,7 @@ public class Game1 : Game
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
+        _graphics.PreferredBackBufferWidth = 580;
         _graphics.PreferredBackBufferHeight = 660;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
