@@ -5,7 +5,7 @@ namespace PicturePuzzle;
 
 public class Block
 {
-    private Texture2D _texture;
+    public Texture2D Texture { get; set; }
     private readonly int _x;
     private readonly int _y;
 
@@ -13,7 +13,7 @@ public class Block
     public Block Right;
     public Block Down;
     public Block Left;
-    
+
     public Block(int x, int y)
     {
         _x = x;
@@ -22,26 +22,18 @@ public class Block
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (_texture != null)
+        if (Texture != null)
         {
-            spriteBatch.Draw(_texture, new Vector2(_x + 5, _y + 5), Color.White);
+            spriteBatch.Draw(Texture, new Vector2(_x + 5, _y + 5), Color.White);
         }
     }
 
-    public Texture2D GetTexture()
-    {
-        return _texture;
-    }
-
-    public void SetTexture(Texture2D texture)
-    {
-        _texture = texture;
-    }
+    public bool Contains(int x, int y) => Texture != null && x >= _x && x <= _x + Texture.Width && y >= _y && y <= _y + Texture.Height;
 
     public void SwapTextures(Block fromBlock)
     {
-        Texture2D temp = _texture;
-        _texture = fromBlock._texture;
-        fromBlock._texture = temp;
+        Texture2D temp = Texture;
+        Texture = fromBlock.Texture;
+        fromBlock.Texture = temp;
     }
 }

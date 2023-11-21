@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -18,15 +17,12 @@ public class GameplayScene : IScene
         _currentBoard = new SimpleBoard(_game1, 120);
     }
 
-    private void LoadTextures(ContentManager content)
-    {
-    }
-
     public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
         if (_currentBoard.HasEnded)
         {
-            _game1.CurrentScene = new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
+            _game1.CurrentScene =
+                new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
             return;
         }
 
@@ -55,21 +51,31 @@ public class GameplayScene : IScene
             {
                 _currentBoard.HandleDownMovement();
                 _pressedTime = currentTime;
+                return;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
             {
                 _currentBoard.HandleLeftMovement();
                 _pressedTime = currentTime;
+                return;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
             {
                 _currentBoard.HandleUpMovement();
                 _pressedTime = currentTime;
+                return;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
             {
                 _currentBoard.HandleRightMovement();
                 _pressedTime = currentTime;
+                return;
+            }
+
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            {
+                if (_currentBoard.HandleMouseLeftButton(Mouse.GetState().X, Mouse.GetState().Y))
+                    _pressedTime = currentTime;
             }
         }
     }

@@ -110,7 +110,7 @@ public abstract class AbstractBoard
                 continue;
             }
 
-            _blocks[i].SetTexture(_blockTextures[randomisedTextures[i]]);
+            _blocks[i].Texture = _blockTextures[randomisedTextures[i]];
         }
     }
 
@@ -225,11 +225,48 @@ public abstract class AbstractBoard
         }
     }
 
+    public bool HandleMouseLeftButton(int mouseX, int mouseY)
+    {
+        foreach (Block block in _blocks)
+        {
+            if (!block.Contains(mouseX, mouseY)) continue;
+
+            if (block.Up != null && block.Up.Texture == null)
+            {
+                block.SwapTextures(block.Up);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Right != null && block.Right.Texture == null)
+            {
+                block.SwapTextures(block.Right);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Down != null && block.Down.Texture == null)
+            {
+                block.SwapTextures(block.Down);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+            else if (block.Left != null && block.Left.Texture == null)
+            {
+                block.SwapTextures(block.Left);
+                _controlledBlockIndex = _blocks.IndexOf(block);
+                Moves++;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public bool IsArranged()
     {
         for (var i = 0; i < 9; i++)
         {
-            if (_blocks[i].GetTexture() == null)
+            if (_blocks[i].Texture == null)
             {
                 if (_textureNamesInOrder[i] != "null")
                 {
@@ -239,7 +276,7 @@ public abstract class AbstractBoard
                 continue;
             }
 
-            if (_blockTexturesReversed[_blocks[i].GetTexture()] != _textureNamesInOrder[i])
+            if (_blockTexturesReversed[_blocks[i].Texture] != _textureNamesInOrder[i])
             {
                 return false;
             }
