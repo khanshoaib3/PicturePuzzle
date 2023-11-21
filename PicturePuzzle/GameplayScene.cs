@@ -20,9 +20,7 @@ public class GameplayScene : BaseScene
 
     private void LoadTextures(ContentManager content)
     {
-        SimpleBoard.LoadTextures(content);
         _simpleBoard = new SimpleBoard(_game1);
-        _simpleBoard.LoadBlocks();
     }
     
     public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
@@ -54,7 +52,7 @@ public class GameplayScene : BaseScene
 
             if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadUp))
             {
-                _simpleBoard.HandleUpMovement();
+                _simpleBoard.HandleDownMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))

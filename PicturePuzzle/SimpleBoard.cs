@@ -4,69 +4,75 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using PicturePuzzle.Content;
 
 namespace PicturePuzzle;
 
 public class SimpleBoard
 {
-    public List<Block> Blocks = new();
-    public static Dictionary<string, Texture2D> BlockTextures = new();
-
     private static Texture2D _boardBackgroundTexture;
 
+    private readonly List<Block> _blocks = new();
+    private readonly Dictionary<string, Texture2D> _blockTextures = new();
+    private readonly Dictionary<Texture2D, string> _blockTexturesReversed = new();
+    private readonly List<string> _textureNamesInOrder;
+
+
     private int _controlledBlockIndex = 4;
-    private Game1 _game1;
-    private const int boardTopLeftX = 225;
-    private const int boardTopLeftY = 75;
+    private readonly Game1 _game1;
+    private const int BoardTopLeftX = 225;
+    private const int BoardTopLeftY = 75;
 
 
     public SimpleBoard(Game1 game1)
     {
         _game1 = game1;
+        _textureNamesInOrder = new List<string>()
+        {
+            "sprites/block_1",
+            "sprites/block_2",
+            "sprites/block_3",
+            "sprites/block_4",
+            "sprites/block_5",
+            "sprites/block_6",
+            "sprites/block_7",
+            "sprites/block_8",
+            "null",
+        };
+        LoadTextures(_game1.Content);
+        LoadBlocks();
     }
 
-    public static void LoadTextures(ContentManager content)
+    private void LoadTextures(ContentManager content)
     {
-        List<string> textureNames = new List<string>()
+        foreach (var name in _textureNamesInOrder)
         {
-            "block_1",
-            "block_2",
-            "block_3",
-            "block_4",
-            "block_5",
-            "block_6",
-            "block_7",
-            "block_8",
-            "block_9",
-        };
-
-        foreach (var name in textureNames)
-        {
-            BlockTextures.Add(name, content.Load<Texture2D>($"sprites/{name}"));
+            if (name == "null") continue;
+            var texture2D = content.Load<Texture2D>(name);
+            _blockTextures.Add(name, texture2D);
+            _blockTexturesReversed.Add(texture2D, name);
         }
 
         _boardBackgroundTexture = content.Load<Texture2D>("sprites/BoardBackground");
     }
 
-    public void LoadBlocks()
+    private void LoadBlocks()
     {
         Block[,] blockArray =
         {
             {
-                new Block("block_1", new Vector2(boardTopLeftX + 0, boardTopLeftY + 0)),
-                new Block("block_2", new Vector2(boardTopLeftX + 120, boardTopLeftY + 0)),
-                new Block("block_3", new Vector2(boardTopLeftX + 240, boardTopLeftY + 0)),
+                new Block(BoardTopLeftX + 0, BoardTopLeftY + 0),
+                new Block(BoardTopLeftX + 120, BoardTopLeftY + 0),
+                new Block(BoardTopLeftX + 240, BoardTopLeftY + 0),
             },
             {
-                new Block("block_4", new Vector2(boardTopLeftX + 0, boardTopLeftY + 120)),
-                new Block("null", new Vector2(boardTopLeftX + 120, boardTopLeftY + 120)),
-                new Block("block_5", new Vector2(boardTopLeftX + 240, boardTopLeftY + 120)),
+                new Block(BoardTopLeftX + 0, BoardTopLeftY + 120),
+                new Block(BoardTopLeftX + 120, BoardTopLeftY + 120),
+                new Block(BoardTopLeftX + 240, BoardTopLeftY + 120),
             },
             {
-                new Block("block_6", new Vector2(boardTopLeftX + 0, boardTopLeftY + 240)),
-                new Block("block_7", new Vector2(boardTopLeftX + 120, boardTopLeftY + 240)),
-                new Block("block_8", new Vector2(boardTopLeftX + 240, boardTopLeftY + 240)),
+                new Block(BoardTopLeftX + 0, BoardTopLeftY + 240),
+                new Block(BoardTopLeftX + 120, BoardTopLeftY + 240),
+                new Block(BoardTopLeftX + 240, BoardTopLeftY + 240),
             }
         };
 
@@ -79,50 +85,50 @@ public class SimpleBoard
                 int down = (i + 1 > 2) ? -1 : (i + 1);
                 int up = (i - 1 < 0) ? -1 : (i - 1);
 
-                blockArray[i, j].up = (up == -1) ? null : blockArray[up, j];
-                blockArray[i, j].right = (right == -1) ? null : blockArray[i, right];
-                blockArray[i, j].down = (down == -1) ? null : blockArray[down, j];
-                blockArray[i, j].left = (left == -1) ? null : blockArray[i, left];
+                blockArray[i, j].Up = (up == -1) ? null : blockArray[up, j];
+                blockArray[i, j].Right = (right == -1) ? null : blockArray[i, right];
+                blockArray[i, j].Down = (down == -1) ? null : blockArray[down, j];
+                blockArray[i, j].Left = (left == -1) ? null : blockArray[i, left];
 
-                Blocks.Add(blockArray[i, j]);
+                _blocks.Add(blockArray[i, j]);
             }
         }
 
         List<string> randomisedTextures = RandomiseTextures();
         for (int i = 0; i < 9; i++)
         {
-            Blocks[i].SetTextureName(randomisedTextures[i]);
             if (randomisedTextures[i] == "null")
+            {
                 _controlledBlockIndex = i;
+                continue;
+            }
+
+            _blocks[i].SetTexture(_blockTextures[randomisedTextures[i]]);
         }
     }
 
     private List<string> RandomiseTextures()
     {
-        List<string> source = new()
-        {
-            "null",
-            "block_1",
-            "block_2",
-            "block_3",
-            "block_4",
-            "block_5",
-            "block_6",
-            "block_7",
-            "block_8",
-        };
         List<string> randomTextures = new();
         Random random = new Random();
         List<int> acquiredIndexes = new();
+        
+        // Move "null" to first
+        List<string> source = new();
+        source.Add("null");
+        foreach (var name in _textureNamesInOrder)
+        {
+            if (name != "null") source.Add(name);
+        }
 
-        for(int i = 0; i < 9; i++)
+        for (int i = 0; i < 9; i++)
         {
             int r = (int)random.NextInt64(0, 9);
             while (acquiredIndexes.Contains(r))
             {
                 r = (int)random.NextInt64(0, 9);
             }
-            
+
             randomTextures.Add(source[r]);
             acquiredIndexes.Add(r);
         }
@@ -150,8 +156,8 @@ public class SimpleBoard
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_boardBackgroundTexture, new Vector2(boardTopLeftX - 10, boardTopLeftY - 10), Color.White);
-        Blocks.ForEach(block => block.Draw(spriteBatch));
+        spriteBatch.Draw(_boardBackgroundTexture, new Vector2(BoardTopLeftX - 10, BoardTopLeftY - 10), Color.White);
+        _blocks.ForEach(block => block.Draw(spriteBatch));
     }
 
     public bool KeyPressed(Keys keyboardKey)
@@ -177,62 +183,59 @@ public class SimpleBoard
 
     public void HandleUpMovement()
     {
-        Block controlledBlock = Blocks[_controlledBlockIndex];
-        if (controlledBlock.up != null)
+        Block controlledBlock = _blocks[_controlledBlockIndex];
+        if (controlledBlock.Up != null)
         {
-            controlledBlock.SwapTextures(controlledBlock.up);
-            _controlledBlockIndex = Blocks.IndexOf(controlledBlock.up);
+            controlledBlock.SwapTextures(controlledBlock.Up);
+            _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Up);
         }
     }
 
     public void HandleRightMovement()
     {
-        Block controlledBlock = Blocks[_controlledBlockIndex];
-        if (controlledBlock.right != null)
+        Block controlledBlock = _blocks[_controlledBlockIndex];
+        if (controlledBlock.Right != null)
         {
-            controlledBlock.SwapTextures(controlledBlock.right);
-            _controlledBlockIndex = Blocks.IndexOf(controlledBlock.right);
+            controlledBlock.SwapTextures(controlledBlock.Right);
+            _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Right);
         }
     }
 
     public void HandleDownMovement()
     {
-        Block controlledBlock = Blocks[_controlledBlockIndex];
-        if (controlledBlock.down != null)
+        Block controlledBlock = _blocks[_controlledBlockIndex];
+        if (controlledBlock.Down != null)
         {
-            controlledBlock.SwapTextures(controlledBlock.down);
-            _controlledBlockIndex = Blocks.IndexOf(controlledBlock.down);
+            controlledBlock.SwapTextures(controlledBlock.Down);
+            _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Down);
         }
     }
 
     public void HandleLeftMovement()
     {
-        Block controlledBlock = Blocks[_controlledBlockIndex];
-        if (controlledBlock.left != null)
+        Block controlledBlock = _blocks[_controlledBlockIndex];
+        if (controlledBlock.Left != null)
         {
-            controlledBlock.SwapTextures(controlledBlock.left);
-            _controlledBlockIndex = Blocks.IndexOf(controlledBlock.left);
+            controlledBlock.SwapTextures(controlledBlock.Left);
+            _controlledBlockIndex = _blocks.IndexOf(controlledBlock.Left);
         }
     }
 
     public bool IsArranged()
     {
-        List<string> correctFormat = new List<string>()
+        for (var i = 0; i < 9; i++)
         {
-            "block_1",
-            "block_2",
-            "block_3",
-            "block_4",
-            "block_5",
-            "block_6",
-            "block_7",
-            "block_8",
-            "null",
-        };
+            if (_blocks[i].GetTexture() == null)
+            {
+                if (_textureNamesInOrder[i] != "null")
+                {
+                    return false;
+                }
 
-        for (var i = 0; i < Blocks.Count; i++)
-        {
-            if (Blocks[i].GetTextureName() != correctFormat[i])
+                continue;
+            }
+
+            if (_blockTexturesReversed[_blocks[i].GetTexture()] != _textureNamesInOrder[i])
             {
                 return false;
             }
