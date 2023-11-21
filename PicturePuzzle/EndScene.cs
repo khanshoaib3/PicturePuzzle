@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PicturePuzzle;
 
-public class EndScene : BaseScene
+public class EndScene : IScene
 {
     private Game1 _game1;
     private readonly SpriteFont _04BFont;
@@ -38,14 +38,14 @@ public class EndScene : BaseScene
         _exitButton.Y = _game1.Window.ClientBounds.Height - _exitButton.Height - 60;
     }
 
-    public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
+    public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
         _playAgainButton.Update();
         _exitButton.Update();
     }
 
     // ReSharper disable PossibleLossOfFraction
-    public override void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch)
     {
         Texture2D logoTexture = _hasWon ? _gameWonTexture : _gameLostTexture;
         int logoX = _game1.Window.ClientBounds.Width / 2 - logoTexture.Width / 2;

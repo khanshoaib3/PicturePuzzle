@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PicturePuzzle;
 
-public class TitleScene : BaseScene
+public class TitleScene : IScene
 {
     private TimeSpan? _pressedTime;
     private Game1 _game1;
@@ -34,7 +34,7 @@ public class TitleScene : BaseScene
         _logoTexture = content.Load<Texture2D>("sprites/title_scene/logo");
     }
 
-    public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
+    public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -49,7 +49,7 @@ public class TitleScene : BaseScene
         _exitButton.Update();
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch)
     {
         int xPos = _game1.Window.ClientBounds.Width / 2 - _logoTexture.Width / 2;
         int yPos = _game1.Window.ClientBounds.Height / 2 - _logoTexture.Height / 2 - 80;

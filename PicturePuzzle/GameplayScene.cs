@@ -6,31 +6,31 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PicturePuzzle;
 
-public class GameplayScene : BaseScene
+public class GameplayScene : IScene
 {
     private Game1 _game1;
-    private SimpleBoard _simpleBoard;
+    private AbstractBoard _currentBoard;
     private TimeSpan? _pressedTime;
 
     public GameplayScene(Game1 game1)
     {
         _game1 = game1;
-        _simpleBoard = new SimpleBoard(_game1);
+        _currentBoard = new SimpleBoard(_game1, 120);
     }
 
     private void LoadTextures(ContentManager content)
     {
     }
 
-    public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)
+    public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
-        if (_simpleBoard.HasEnded)
+        if (_currentBoard.HasEnded)
         {
-            _game1.CurrentScene = new EndScene(_game1, _simpleBoard.HasWon, _simpleBoard.Moves, _simpleBoard.TimeLeft);
+            _game1.CurrentScene = new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
             return;
         }
 
-        _simpleBoard.Update(gameTime);
+        _currentBoard.Update(gameTime);
 
         var currentTime = gameTime.TotalGameTime;
         if (_pressedTime == null || currentTime - (TimeSpan)_pressedTime >= TimeSpan.FromMilliseconds(250))
@@ -44,7 +44,7 @@ public class GameplayScene : BaseScene
 
             foreach (var key in Keyboard.GetState().GetPressedKeys())
             {
-                if (_simpleBoard.KeyPressed(key))
+                if (_currentBoard.KeyPressed(key))
                 {
                     _pressedTime = currentTime;
                     return;
@@ -53,29 +53,29 @@ public class GameplayScene : BaseScene
 
             if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadUp))
             {
-                _simpleBoard.HandleDownMovement();
+                _currentBoard.HandleDownMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadRight))
             {
-                _simpleBoard.HandleLeftMovement();
+                _currentBoard.HandleLeftMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadDown))
             {
-                _simpleBoard.HandleUpMovement();
+                _currentBoard.HandleUpMovement();
                 _pressedTime = currentTime;
             }
             else if (GamePad.GetState(PlayerIndex.One).IsButtonDown(Buttons.DPadLeft))
             {
-                _simpleBoard.HandleRightMovement();
+                _currentBoard.HandleRightMovement();
                 _pressedTime = currentTime;
             }
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch)
     {
-        _simpleBoard.Draw(spriteBatch);
+        _currentBoard.Draw(spriteBatch);
     }
 }

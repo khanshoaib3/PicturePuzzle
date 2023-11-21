@@ -8,7 +8,7 @@ public class Game1 : Game
     // ReSharper disable once NotAccessedField.Local
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    public BaseScene CurrentScene;
+    public IScene CurrentScene;
 
     public Game1()
     {
