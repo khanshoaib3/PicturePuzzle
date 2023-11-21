@@ -104,6 +104,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/common/start_button_unhovered.png
 
+#begin sprites/end_scene/game_lost.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/end_scene/game_lost.png
+
+#begin sprites/end_scene/game_won.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/end_scene/game_won.png
+
 #begin sprites/simple_board/block_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -200,7 +224,7 @@
 /processorParam:TextureFormat=Color
 /build:sprites/simple_board/block_8.png
 
-#begin sprites/title_screen/logo.png
+#begin sprites/title_scene/logo.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -210,5 +234,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/title_screen/logo.png
+/build:sprites/title_scene/logo.png
 

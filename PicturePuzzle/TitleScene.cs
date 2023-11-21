@@ -31,7 +31,7 @@ public class TitleScene : BaseScene
 
     private void LoadTextures(ContentManager content)
     {
-        _logoTexture = content.Load<Texture2D>("sprites/title_screen/logo");
+        _logoTexture = content.Load<Texture2D>("sprites/title_scene/logo");
     }
 
     public override void Update(GameTime gameTime, GraphicsDeviceManager graphics)

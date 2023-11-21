@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -51,8 +52,8 @@ public class SimpleBoard
             "null",
         };
         _04BFont = _game1.Content.Load<SpriteFont>("fonts/04B_30");
-        _timeLeft = 240;
-        _totalTimeInSeconds = 240;
+        _timeLeft = 120;
+        _totalTimeInSeconds = 120;
         _hasEnded = false;
         LoadTextures();
         LoadBlocks();
@@ -75,8 +76,8 @@ public class SimpleBoard
     {
         int blockStartX = BoardTopLeftX + 5;
         int blockStartY = BoardTopLeftY + 85;
-        int blockWidth = _blockTextures["sprites/simple_board/block_1"].Width;
-        int blockHeight = _blockTextures["sprites/simple_board/block_1"].Height;
+        int blockWidth = _blockTextures.First().Value.Width;
+        int blockHeight = _blockTextures.First().Value.Height;
         // ReSharper disable UselessBinaryOperation
         Block[,] blockArray =
         {
