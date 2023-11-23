@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -53,9 +52,6 @@ public class Button
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (_hovered)
-            spriteBatch.Draw(_hoveredTexture, new Vector2(X, Y), Color.White);
-        else
-            spriteBatch.Draw(_unHoveredTexture, new Vector2(X, Y), Color.White);
+        spriteBatch.Draw(_hovered ? _hoveredTexture : _unHoveredTexture, new Vector2(X, Y), Color.White);
     }
 }

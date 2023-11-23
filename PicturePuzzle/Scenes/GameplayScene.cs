@@ -14,7 +14,7 @@ public class GameplayScene : IScene
     public GameplayScene(Game1 game1)
     {
         _game1 = game1;
-        _currentBoard = new SimpleBoard(_game1, 120);
+        _currentBoard = new EmojiBoard(_game1, 120);
     }
 
     public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
