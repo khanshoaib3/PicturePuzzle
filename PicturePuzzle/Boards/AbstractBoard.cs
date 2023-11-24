@@ -84,10 +84,10 @@ public abstract class AbstractBoard
                 int down = (i + 1 > _gridSize - 1) ? -1 : (i + 1);
                 int up = (i - 1 < 0) ? -1 : (i - 1);
 
-                blockArray[i, j].Up = (up == -1) ? null : blockArray[up, j];
-                blockArray[i, j].Right = (right == -1) ? null : blockArray[i, right];
-                blockArray[i, j].Down = (down == -1) ? null : blockArray[down, j];
-                blockArray[i, j].Left = (left == -1) ? null : blockArray[i, left];
+                blockArray[j, i].Up = (up == -1) ? null : blockArray[j, up];
+                blockArray[j, i].Right = (right == -1) ? null : blockArray[right, i];
+                blockArray[j, i].Down = (down == -1) ? null : blockArray[j, down];
+                blockArray[j, i].Left = (left == -1) ? null : blockArray[left, i];
 
                 _blocks.Add(blockArray[j, i]);
             }
@@ -281,13 +281,15 @@ public abstract class AbstractBoard
     }
 
     public bool IsArranged()
-    {
+    { 
+        Console.WriteLine();
         for (var i = 0; i < TotalBlocks; i++)
         {
             if (_blocks[i].Texture == null)
             {
                 if (_textureNamesInOrder[i] != "null")
                 {
+                    Console.WriteLine("null");
                     return false;
                 }
 
@@ -296,6 +298,7 @@ public abstract class AbstractBoard
 
             if (_blockTexturesReversed[_blocks[i].Texture] != _textureNamesInOrder[i])
             {
+                Console.WriteLine(_blockTexturesReversed[_blocks[i].Texture] + "\t" + _textureNamesInOrder[i]);
                 return false;
             }
         }
