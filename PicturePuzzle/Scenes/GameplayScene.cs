@@ -8,19 +8,45 @@ namespace PicturePuzzle;
 public class GameplayScene : IScene
 {
     private Game1 _game1;
-    private AbstractBoard _currentBoard;
+    private BoardSelectionScene? _boardSelectionPage;
+    private AbstractBoard? _currentBoard;
     private TimeSpan? _pressedTime;
 
     public GameplayScene(Game1 game1)
     {
         _game1 = game1;
-        _currentBoard = new BatmanBoard(_game1, 240);
+        _boardSelectionPage = new BoardSelectionScene(_game1);
     }
 
     public virtual void Update(GameTime gameTime, GraphicsDeviceManager graphics)
     {
-        _currentBoard.Update(gameTime);
+        if (_boardSelectionPage != null)
+        {
+            switch (_boardSelectionPage.Selected)
+            {
+                case 0:
+                    break;
+                case 1:
+                    _currentBoard = new SimpleBoard(_game1, 80);
+                    _boardSelectionPage = null;
+                    break;
+                case 2:
+                    _currentBoard = new EmojiBoard(_game1, 150);
+                    _boardSelectionPage = null;
+                    break;
+                case 3:
+                    _currentBoard = new BatmanBoard(_game1, 240);
+                    _boardSelectionPage = null;
+                    break;
+            }
 
+            _boardSelectionPage?.Update(gameTime, graphics);
+            return;
+        }
+
+        if (_currentBoard == null) return;
+
+        _currentBoard.Update(gameTime);
         if (_currentBoard.HasEnded)
         {
             _game1.CurrentScene = new EndScene(_game1, _currentBoard.HasWon, _currentBoard.Moves, _currentBoard.TimeLeft);
@@ -32,6 +58,8 @@ public class GameplayScene : IScene
 
     private void HandleInputs(GameTime gameTime)
     {
+        if (_currentBoard == null) return;
+
         var currentTime = gameTime.TotalGameTime;
         if (_pressedTime != null && currentTime - (TimeSpan)_pressedTime < TimeSpan.FromMilliseconds(250)) return;
 
@@ -57,6 +85,7 @@ public class GameplayScene : IScene
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        _currentBoard.Draw(spriteBatch);
+        _boardSelectionPage?.Draw(spriteBatch);
+        _currentBoard?.Draw(spriteBatch);
     }
 }

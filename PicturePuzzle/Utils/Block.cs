@@ -5,14 +5,14 @@ namespace PicturePuzzle;
 
 public class Block
 {
-    public Texture2D Texture { get; set; }
+    public Texture2D? Texture { get; set; }
     private readonly int _x;
     private readonly int _y;
 
-    public Block Up;
-    public Block Right;
-    public Block Down;
-    public Block Left;
+    public Block? Up;
+    public Block? Right;
+    public Block? Down;
+    public Block? Left;
 
     public Block(int x, int y)
     {

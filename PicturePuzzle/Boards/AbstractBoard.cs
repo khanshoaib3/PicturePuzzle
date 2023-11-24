@@ -15,7 +15,7 @@ public abstract class AbstractBoard
     private readonly Dictionary<string, Texture2D> _blockTextures = new();
     private readonly Dictionary<Texture2D, string> _blockTexturesReversed = new();
     private readonly List<string> _textureNamesInOrder;
-    private Texture2D _boardBackgroundTexture;
+    private Texture2D _boardBackgroundTexture = null!;
     private readonly SpriteFont _04BFont;
     private readonly Game1 _game1;
 
@@ -282,23 +282,20 @@ public abstract class AbstractBoard
 
     public bool IsArranged()
     { 
-        Console.WriteLine();
         for (var i = 0; i < TotalBlocks; i++)
         {
             if (_blocks[i].Texture == null)
             {
                 if (_textureNamesInOrder[i] != "null")
                 {
-                    Console.WriteLine("null");
                     return false;
                 }
 
                 continue;
             }
 
-            if (_blockTexturesReversed[_blocks[i].Texture] != _textureNamesInOrder[i])
+            if (_blockTexturesReversed[_blocks[i].Texture!] != _textureNamesInOrder[i])
             {
-                Console.WriteLine(_blockTexturesReversed[_blocks[i].Texture] + "\t" + _textureNamesInOrder[i]);
                 return false;
             }
         }
