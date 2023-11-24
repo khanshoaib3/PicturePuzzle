@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -22,8 +21,10 @@ public abstract class AbstractBoard
 
     private int _controlledBlockIndex;
     private TimeSpan? _startingTime;
-    private int _totalTimeInSeconds;
+    private readonly int _totalTimeInSeconds;
+    private readonly int _gridSize;
 
+    private int TotalBlocks => _gridSize * _gridSize;
     public string BoardName { get; }
     public bool HasEnded { get; private set; }
     public bool HasWon { get; private set; }
@@ -31,9 +32,10 @@ public abstract class AbstractBoard
     public int TimeLeft { get; private set; }
 
 
-    public AbstractBoard(Game1 game1, List<string> textureNamesInOrder, string boardName, int totalTimeInSeconds)
+    public AbstractBoard(Game1 game1, List<string> textureNamesInOrder, string boardName, int totalTimeInSeconds, int gridSize = 3)
     {
         _game1 = game1;
+        _gridSize = gridSize;
         _textureNamesInOrder = textureNamesInOrder;
         BoardName = boardName;
         TimeLeft = totalTimeInSeconds;
@@ -61,48 +63,38 @@ public abstract class AbstractBoard
     {
         int blockStartX = BoardTopLeftX + 5;
         int blockStartY = BoardTopLeftY + 85;
-        int blockWidth = _blockTextures.First().Value.Width;
-        int blockHeight = _blockTextures.First().Value.Height;
+        int blockWidth = 540 / _gridSize;
+        int blockHeight = 540 / _gridSize;
         // ReSharper disable UselessBinaryOperation
-        Block[,] blockArray =
+        Block[,] blockArray = new Block[_gridSize,_gridSize];
+        for (int i = 0; i < _gridSize; i++)
         {
+            for (int j = 0; j < _gridSize; j++)
             {
-                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 0),
-                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 0),
-                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 0),
-            },
-            {
-                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 1),
-                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 1),
-                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 1),
-            },
-            {
-                new Block(blockStartX + blockWidth * 0, blockStartY + blockHeight * 2),
-                new Block(blockStartX + blockWidth * 1, blockStartY + blockHeight * 2),
-                new Block(blockStartX + blockWidth * 2, blockStartY + blockHeight * 2),
+                blockArray[i,j] = new Block(blockStartX + blockWidth * i, blockStartY + blockHeight * j);
             }
-        };
+        }
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < _gridSize; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < _gridSize; j++)
             {
-                int right = (j + 1 > 2) ? -1 : (j + 1);
+                int right = (j + 1 > _gridSize - 1) ? -1 : (j + 1);
                 int left = (j - 1 < 0) ? -1 : (j - 1);
-                int down = (i + 1 > 2) ? -1 : (i + 1);
+                int down = (i + 1 > _gridSize - 1) ? -1 : (i + 1);
                 int up = (i - 1 < 0) ? -1 : (i - 1);
 
-                blockArray[i, j].Up = (up == -1) ? null : blockArray[up, j];
-                blockArray[i, j].Right = (right == -1) ? null : blockArray[i, right];
-                blockArray[i, j].Down = (down == -1) ? null : blockArray[down, j];
-                blockArray[i, j].Left = (left == -1) ? null : blockArray[i, left];
+                blockArray[j, i].Up = (up == -1) ? null : blockArray[j, up];
+                blockArray[j, i].Right = (right == -1) ? null : blockArray[right, i];
+                blockArray[j, i].Down = (down == -1) ? null : blockArray[j, down];
+                blockArray[j, i].Left = (left == -1) ? null : blockArray[left, i];
 
-                _blocks.Add(blockArray[i, j]);
+                _blocks.Add(blockArray[j, i]);
             }
         }
 
         List<string> randomisedTextures = RandomiseTextures();
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < _gridSize * _gridSize; i++)
         {
             if (randomisedTextures[i] == "null")
             {
@@ -127,12 +119,12 @@ public abstract class AbstractBoard
             if (name != "null") source.Add(name);
         }
 
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < TotalBlocks; i++)
         {
-            int r = (int)random.NextInt64(0, 9);
+            int r = (int)random.NextInt64(0, TotalBlocks);
             while (acquiredIndexes.Contains(r))
             {
-                r = (int)random.NextInt64(0, 9);
+                r = (int)random.NextInt64(0, TotalBlocks);
             }
 
             randomTextures.Add(source[r]);
@@ -147,9 +139,9 @@ public abstract class AbstractBoard
     private bool IsSolvable(List<int> indexes)
     {
         int inversions = 0;
-        for (int i = 0; i < 9 - 1; i++)
+        for (int i = 0; i < TotalBlocks - 1; i++)
         {
-            for (int j = i + 1; j < 9; j++)
+            for (int j = i + 1; j < TotalBlocks; j++)
             {
                 if (indexes[j] > 0 && indexes[i] > 0 && indexes[i] > indexes[j])
                     inversions++;
@@ -289,13 +281,15 @@ public abstract class AbstractBoard
     }
 
     public bool IsArranged()
-    {
-        for (var i = 0; i < 9; i++)
+    { 
+        Console.WriteLine();
+        for (var i = 0; i < TotalBlocks; i++)
         {
             if (_blocks[i].Texture == null)
             {
                 if (_textureNamesInOrder[i] != "null")
                 {
+                    Console.WriteLine("null");
                     return false;
                 }
 
@@ -304,6 +298,7 @@ public abstract class AbstractBoard
 
             if (_blockTexturesReversed[_blocks[i].Texture] != _textureNamesInOrder[i])
             {
+                Console.WriteLine(_blockTexturesReversed[_blocks[i].Texture] + "\t" + _textureNamesInOrder[i]);
                 return false;
             }
         }
